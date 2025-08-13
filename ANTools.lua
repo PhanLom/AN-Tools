@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.0')
+script_version('3.1.1')
 script_properties('work-in-pause')
 
 local dlstatus = require("moonloader").download_status
@@ -2906,30 +2906,6 @@ function imgui.OnDrawFrame()
 			end
 			PaddingSpace()
 			imgui.Separator()
-			imgui.CenterText(u8('Автооткрытие рулеток'))
-			imgui.Separator()
-			PaddingSpace()
-			imgui.BeginGroup()
-			imgui.Checkbox(u8('Открывать стандарт сундук'),roulette.standart); imgui.SameLine() imgui.TextQuestion(u8('Для оптимизации открывания сундуков стандартный сундук должен быть на любом слоте на 1 странице')) 
-			imgui.Checkbox(u8('Открывать донат сундук'),roulette.donate); imgui.SameLine() imgui.TextQuestion(u8('[Обязательно!] Донатный сундук должен быть на любом слоте на 1 странице'))
-			imgui.Checkbox(u8('Открывать платина сундук'),roulette.platina); imgui.SameLine() imgui.TextQuestion(u8('[Обязательно!] Платиновый сундук должен быть на любом слоте на 1 странице'))
-			imgui.Checkbox(u8('Открывать тайник Илона Маска'),roulette.mask); imgui.SameLine() imgui.TextQuestion(u8('[Обязательно!] Сундук Маска должен быть на любом слоте на 1 странице'))
-			imgui.EndGroup()
-			imgui.SameLine(350)
-			imgui.BeginGroup()
-			imgui.Checkbox(u8('Открывать тайник Лос-Сантоса'),roulette.tainik); imgui.SameLine() imgui.TextQuestion(u8('[Обязательно!] Тайник Лос-Сантоса должен быть на любом слоте на 1 странице'))
-			imgui.TextDisabled((u8("Открывать тайник Vice-City")), roulette.tainikvc); imgui.SameLine() imgui.TextQuestion(u8('Скоро!'))
-			imgui.PushItemWidth(100)
-			imgui.InputInt(u8('Задержка (в минутах.)##wait'),roulette.wait)
-			imgui.SameLine()
-			imgui.TextQuestion(u8('Задержка перед чеком состояния рулеток(можно открыть или нет)'))
-			imgui.PopItemWidth()
-			if imgui.Button(u8('Включить/выключить автооткрытие сундуков')) then 
-			    openchestrullet()
-			end
-			imgui.EndGroup()
-			PaddingSpace()
-			imgui.Separator()
 			imgui.CenterText(u8('Автоматическая отправка сообщений'))
 			imgui.Separator()
 			PaddingSpace()
@@ -2973,68 +2949,6 @@ function imgui.OnDrawFrame()
 			    end
 			    imgui.PopItemWidth()
 			end
-			PaddingSpace()
-			imgui.Separator()
-			imgui.CenterText(u8('Остальные настройки'))
-			imgui.Separator()
-			PaddingSpace()
-			imgui.BeginGroup()
-			if imgui.Checkbox(u8('Fastconnect'),fastconnect) then
-				sampFastConnect(fastconnect.v)
-			end
-			imgui.SameLine()
-			imgui.TextQuestion(u8('Быстрый вход на сервер'))
-			if imgui.Checkbox(u8('AntiAFK'),antiafk) then workpaus(antiafk.v) end
-			imgui.SameLine()
-			imgui.TextQuestion(u8('Вы не будете стоять в AFK если свернете игру\nВнимание! Если AntiAFK включен и вы сохранили настройки то при следуещем заходе он автоматически включится! Учтите это!'))
-			imgui.Checkbox(u8('AutoScreenBan'),banscreen)
-			imgui.SameLine()
-			imgui.TextQuestion(u8('Если вас забанит админ то скрин сделается автоматически'))
-			imgui.EndGroup()
-			imgui.SameLine(350)
-			imgui.BeginGroup()
-			imgui.Checkbox(u8('Автообновление'),autoupdateState)
-			imgui.SameLine()
-			imgui.TextQuestion(u8('Включает автообновление. По умолчанию включено'))
-			imgui.SameLine(210)
-			imgui.BeginGroup()
-			imgui.EndGroup()
-			
-			if imgui.Checkbox(u8'Удалять игроков в радиусе', delplayeractive) then
-		delplayer = not delplayer
-			for _, handle in ipairs(getAllChars()) do
-				if doesCharExist(handle) then
-					local _, id = sampGetPlayerIdByCharHandle(handle)
-					if id ~= myid then
-						emul_rpc('onPlayerStreamOut', { id })
-						npc[#npc + 1] = id
-					end
-				end
-			end
-			
-			if not delplayer then
-				for i = 1, #npc do
-					send_player_stream(npc[i], infnpc[npc[i]])
-					npc[i] = nil
-				end
-			end
-		end
-	imgui.SameLine()
-	imgui.TextQuestion(u8"Функция удаляет всех игроков в радиусе. Очень полезно при скупе т.к падает шанс краша игры. Чтобы вернуть игроков - выключите функцию и зайдите в инту, затем выйдите из неё. Или можно просто перезайти в игру.")
-			imgui.Checkbox(u8('Автологин'),autologinfix.state)
-			if autologinfix.state.v then
-				imgui.PushItemWidth(130)
-				imgui.InputText(u8('Ник для входа'), autologinfix.nick)
-				imgui.PopItemWidth()
-			end
-			if autologinfix.state.v then
-				imgui.PushItemWidth(130)
-				imgui.InputText(u8('Пароль для входа'), autologinfix.pass, showpass and 0 or imgui.InputTextFlags.Password)
-				imgui.PopItemWidth()
-				if imgui.Button(u8('Показать##1010')) then showpass = not showpass end
-			end
-
-			imgui.EndGroup()
 			PaddingSpace()
 			imgui.Separator()
 			imgui.CenterText(u8('Скрипты по отдельности'))
