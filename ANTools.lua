@@ -4443,7 +4443,7 @@ updates.data = {
 	status = '',
 	relevant_version = '',
 	url_update = '',
-	url_json = '' 
+	url_json = 'https://raw.githubusercontent.com/PhanLom/AN-Tools/main/ANTools.json' 
 }
 function updates:getlast(autoupd)
 	print('call getlast')
