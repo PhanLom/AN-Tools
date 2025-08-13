@@ -22,5 +22,5 @@ The script is an assistant for pumping an account in SA:MP, on the Arizona Role 
 
 
 ---
-## Author: PhanLom
+## Author: Neverlane
 ## Development: PhanLom. 
