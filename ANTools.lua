@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.2.2')
+script_version('3.1.2.3')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -2858,7 +2858,7 @@ function imgui.OnDrawFrame()
 		-- imgui.SetCursorPosY(85) -- позволяет задать положение функции по вертикали
 		local hostserver = sampGetCurrentServerName()
 		imgui.SetCursorPos(imgui.ImVec2(40,8)) -- Author: neverlane(ronnyevans)\n
-		imgui.RenderLogo() imgui.SameLine() imgui.Dummy(20, 0) imgui.SameLine() imgui.Text(u8('\nDev/Support: PhanLom\nАккаунт: ' ..acc))
+		imgui.RenderLogo() imgui.SameLine() imgui.Dummy(imgui.ImVec2(20, 0)) imgui.SameLine() imgui.Text(u8('\nDev/Support: PhanLom\nАккаунт: ' ..acc))
 		imgui.SetCursorPos(imgui.ImVec2(516,8))
 		imgui.BeginGroup()
 		imgui.Text(u8('Версия -> Текущая: '..thisScript().version..' | Актуальная: '..(updates.data.result and updates.data.relevant_version or 'Error')))
