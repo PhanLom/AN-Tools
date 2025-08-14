@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.2.3')
+script_version('3.1.2.4')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -668,7 +668,7 @@ howscreen = [[
 local _message = {}
 
 local style_selected = imgui.ImInt(mainIni.theme.style) 
-local style_list = {u8"Оригинальная", u8'Светлая', u8"Серая", u8"Тёмная", u8"Вишнёвая", u8"Фиолетовая", u8"Розовая"}
+local style_list = {u8"Оригинальная", u8'Светлая', u8"Серая", u8"Тёмная", u8"Вишнёвая", u8"Фиолетовая", u8"Розовая", u8"Голубая"}
 
 local banner = imgui.CreateTextureFromFile(getWorkingDirectory() .. "\\resource\\ANTools\\script_banner.png")
 
