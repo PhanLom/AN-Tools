@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.1')
+script_version('3.1.2')
 script_properties('work-in-pause')
 
 local dlstatus = require("moonloader").download_status
@@ -568,6 +568,16 @@ changelog5 = [[
 		· Удалён устаревший гайд по настройке API ВКонтакте
 		· Удалена версия с пабликом
 		· Удалён автоответчик 
+
+	v3.1.2
+		· Исправлены ошибки в работе с VK API
+		· Улучшена стабильность работы скрипта
+		· Добавлены новые функции для работы с Telegram
+			·!d работает штатно
+			·!dc работает штатно
+			·!off game работает штатно
+			·!off pc работает штатно
+		· Обновлены зависимости
 
 ]]
 
@@ -1518,7 +1528,7 @@ function sendtgnotf(msg)
     msg = msg:gsub('{......}', '')
     msg = '[Notifications | '..acc..' | '..host..']\n'..msg
     msg = encodeUrl1(msg)
-	async_http_request2('https://api.telegram.org/bot' .. tgnotf.token.v .. '/sendMessage?chat_id=' .. tgnotf.user_id.v .. '&reply_markup={"keyboard": [["Info", "Stats", "Hungry"], ["Reload Script", "Last 10 lines of chat"], ["Send Dialogs", "Support"]], "resize_keyboard": true}&text='..msg,'', function(result) end)
+	async_http_request2('https://api.telegram.org/bot' .. tgnotf.token.v .. '/sendMessage?chat_id=' .. tgnotf.user_id.v .. '&reply_markup={"keyboard": [["Info", "Stats", "Hungry"], ["Reload Script", "Last 10 lines of chat"], ["Send Dialogs", "Support"], ["Off Game","Off PC"]], "resize_keyboard": true}&text='..msg,'', function(result) end)
 	end
 end
 
@@ -1594,22 +1604,65 @@ function processing_telegram_messages(result)
                                 getPlayerArzHunTG()
                             elseif text:match('^!send') then
 								text = text:sub(1, text:len() - 1):gsub('!send ','')
-								sampProcessChatInput(text)
-								sendtgnotf('Сообщение "' .. text .. '" было успешно отправлено в игру')
+								if text ~= '!send' then
+									sampProcessChatInput(text)
+									sendtgnotf('Сообщение "' .. text .. '" было успешно отправлено в игру')
+								else
+									sendtgnotf('Сообщение не может быть пустым')
+								end
 							elseif text:match('^!sendcode') then
 								text = text:sub(1, text:len() - 1):gsub('!sendcode ','')
-								sampSendDialogResponse(8928, 1, false, (text))
-								sendtgnotf('Код "' .. text .. '" был успешно отправлен в диалог')
+								if text ~= '!sendcode' then
+									sampSendDialogResponse(8928, 1, false, (text))
+									sendtgnotf('Код "' .. text .. '" был успешно отправлен в диалог')
+								else
+									sendtgnotf('Неправильный аргумент! Пример: !sendcode [код]')
+								end
 							elseif text:match('^!sendvk') then
 								text = text:sub(1, text:len() - 1):gsub('!sendvk ','')
-								sampSendDialogResponse(7782, 1, false, (text))
-								sendtgnotf('Код "' .. text .. '" был успешно отправлен в диалог')
+								if text ~= '!sendvk' then
+									sampProcessChatInput(text)
+									sendtgnotf('Сообщение "' .. text .. '" было успешно отправлено в игру')
+								else
+									sendtgnotf('Неправильный аргумент! Пример: !sendvk [код]')
+								end
 							elseif text:match('^!gauth') then
 								text = text:sub(1, text:len() - 1):gsub('!gauth ','')
-								sampSendDialogResponse(8929, 1, false, (text))
-								sendtgnotf('Код "' .. text .. '" был успешно отправлен в диалог')
+								if text ~= '!gauth' then
+									sampProcessChatInput(text)
+									sendtgnotf('Сообщение "' .. text .. '" было успешно отправлено в игру')
+								else
+									sendtgnotf('Неправильный аргумент! Пример: !gauth [код]')
+								end
 							elseif text:match('^!screen') then
 								sendScreenTg()
+							elseif text:match('^Off Game') then
+								sendtgnotf('Выключаю игру')
+								wait(1000)
+								os.execute("taskkill /f /im gta_sa.exe")
+							elseif text:match('^Off PC') then
+								os.execute("shutdown -s -t 30")
+								sendtgnotf('Компьютер будет выключен через 30 секунд.')
+							elseif text:match('^!d ') then
+								text = text:sub(1, text:len() - 1)
+								local style = sampGetCurrentDialogType()
+								if (style == 2 or style > 3) and text:match('^!d (%d*)') then
+									sampSendDialogResponse(sampGetCurrentDialogId(), 1, tonumber(u8:decode(text:match('^!d (%d*)'))) - 1, -1)
+								elseif style == 1 or style == 3 then
+									sampSendDialogResponse(sampGetCurrentDialogId(), 1, -1, u8:decode(text:match('^!d (.*)')))
+								else
+									sampSendDialogResponse(sampGetCurrentDialogId(), 1, -1, -1) -- да
+								end
+								closeDialog()
+							elseif text:match('^!dc ') then
+								sampSendDialogResponse(sampGetCurrentDialogId(), 0, -1, -1) -- нет
+								sampCloseCurrentDialogWithButton(0)
+							else
+								if text and text:sub(1, 1) == '/' then
+									text = text:sub(1, text:len() - 1)
+									sampProcessChatInput(u8:decode(text))
+								end
+								return
 							end
 						end
                         end
