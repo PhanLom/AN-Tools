@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.2.4')
+script_version('3.1.2.5')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -3008,35 +3008,14 @@ function imgui.OnDrawFrame()
 			imgui.Separator()
 			PaddingSpace()
 			imgui.BeginGroup()
-			-- Cosmo --
-			if imgui.Button(u8('Скачать VIP-Resend by Cosmo')) then
-				downloadUrlToFile('https://github.com/SMamashin/ANTools/raw/main/scripts/vip-resend.lua',
-                   'moonloader\\vip-resend.lua', 
-                   'vip-resend.lua')
-				sampAddChatMessage("{FF8000}[ANTools]{FFFFFF} VIP-Resend успешно загружен! Нажмите Ctrl+R для перезапуска MoonLoader.", -1)
-            end
-			imgui.SameLine()
-			imgui.TextQuestion(u8("Скрипт от нашего друга Cosmo, позволяет скипать диалог рекламы в /vr"))
-			-- AIR -- 
-			imgui.SameLine()
-			if imgui.Button(u8('Скачать AntiAFK by AIR')) then
-				downloadUrlToFile('https://github.com/SMamashin/ANTools/raw/main/scripts/AntiAFK_1.4_byAIR.asi',
-                getGameDirectory()..'\\AntiAFK_1.4_byAIR.asi',
-                'AntiAFK_1.4_byAIR.asi')
-				sampAddChatMessage("{FF8000}[ANTools]{FFFFFF} AntiAFK успешно загружен! Перезайдите полностью в игру, чтобы он заработал.", -1)
-            end
-			imgui.SameLine()
-			imgui.TextQuestion(u8("ASI-Плагин от A.I.R, отличный AntiAFK для лаунчера, на случай проблем с нашей Lua-версией."))
-			-- BoxSet --
-			imgui.SameLine()
-			if imgui.Button(u8('Автоотркытие сундуков /boxset')) then
-				downloadUrlToFile('https://github.com/SMamashin/ANTools/raw/main/scripts/open_roulettes.lua',
-                   'moonloader\\open_roulettes.lua', 
-                   'open_roulettes.lua')
-				sampAddChatMessage("{FF8000}[ANTools]{FFFFFF} Open_Roulettes(/boxset) успешно загружен! Нажмите Ctrl+R для перезапуска MoonLoader.", -1)
+			if imgui.Button(u8('Стамина худ')) then
+				downloadUrlToFile('https://github.com/PhanLom/ARZ-Scripts/raw/main/CEF%20Stamina%20HUD/%5BARZ%5D%20HUD%20Stamina.lua',
+                   'moonloader\\[ARZ] HUD Stamina.lua', 
+                   '[ARZ] HUD Stamina.lua')
+				sampAddChatMessage("{FF8000}[ANTools]{FFFFFF} [ARZ] HUD Stamina успешно загружен! Нажмите Ctrl+R для перезапуска MoonLoader.", -1)
             end
             imgui.SameLine()
-			imgui.TextQuestion(u8('/boxset - устаревшая альтернатива нашему автооткрытию, вроде ещё работает.'))
+			imgui.TextQuestion(u8('Скрипт для отображения стамины в HUD на экране'))
 			imgui.EndGroup()
 			imgui.EndChild()
 
