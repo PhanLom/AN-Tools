@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.2.5')
+script_version('3.1.2.6')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -3016,6 +3016,13 @@ function imgui.OnDrawFrame()
             end
             imgui.SameLine()
 			imgui.TextQuestion(u8('Скрипт для отображения стамины в HUD на экране'))
+			imgui.SameLine()
+			if imgui.Button(u8('Числовой счетчик')) then
+				downloadUrlToFile('https://github.com/PhanLom/ARZ-Scripts/raw/main/Number%20Couter/NumberChanger.lua',
+                   'moonloader\\Number Changer.lua', 
+                   'Number Changer.lua')
+				sampAddChatMessage("{FF8000}[ANTools]{FFFFFF} Number Changer успешно загружен! Нажмите Ctrl+R для перезапуска MoonLoader.", -1)
+            end
 			imgui.EndGroup()
 			imgui.EndChild()
 
