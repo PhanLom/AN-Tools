@@ -3023,6 +3023,8 @@ function imgui.OnDrawFrame()
                    'Number Changer.lua')
 				sampAddChatMessage("{FF8000}[ANTools]{FFFFFF} Number Changer успешно загружен! Нажмите Ctrl+R для перезапуска MoonLoader.", -1)
             end
+			imgui.SameLine()
+			imgui.TextQuestion(u8('Скрипт для отображения числа. Num+ - добавляет 1 к числу, Num- - вычитает 1 из числа'))
 			imgui.EndGroup()
 			imgui.EndChild()
 
