@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.2.7')
+script_version('3.1.2.8')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -1338,7 +1338,7 @@ function longpollResolve(result)
 					elseif objsend[1] == '!screen' then
 						sendscreen()
 					elseif objsend[1] == '!helpscreen' then
-						sendhelpscreen()
+						sendhelpscreenVK()
 					elseif objsend[1] == '!send' then
 						print('this')
 						local args = table.concat(objsend, " ", 2, #objsend) 
@@ -1588,6 +1588,8 @@ function processing_telegram_messages(result)
 								getPlayerArzHunTG()
 							elseif text:match('^Last 10 lines of chat') then
 								lastchatmessageTG(10, sendtgnotf)
+							elseif text:match('^!helpscreen') then
+								sendhelpscreenTG()
 							elseif text:match('^Reload Script') then
 								sendtgnotf('Перезагружаю скрипт...')
 								thisScript():reload()
@@ -2098,8 +2100,11 @@ function randomInt()
     math.randomseed(os.time() + os.clock())
     return math.random(-2147483648, 2147483648)
 end 
-function sendhelpscreen()
+function sendhelpscreenVK()
 	sendvknotf('Инструкция по наладке команды "!screen":\n\nКоманда !screen работает следующим образом:\n• Если игра свёрнута - произойдет краш скрипта\n• Если игра на весь экран - придёт просто белый скриншот.\n• Чтобы сработало идеально - нужно сделать игру в оконный режим и растянуть на весь экран (на лаунчере можно просто в настройках лаунчера включить оконный режим).\n• Для работы команды нужно скачать необходимые библиотеки (скачать можно в меню VK/TG Notifications)')
+end
+function sendhelpscreenTG()
+	sendtgnotf('Инструкция по наладке команды "!screen":\n\nКоманда !screen работает следующим образом:\n• Если игра свёрнута - произойдет краш скрипта\n• Если игра на весь экран - придёт просто белый скриншот.\n• Чтобы сработало идеально - нужно сделать игру в оконный режим и растянуть на весь экран (на лаунчере можно просто в настройках лаунчера включить оконный режим).\n• Для работы команды нужно скачать необходимые библиотеки (скачать можно в меню VK/TG Notifications)')
 end
 function sendscreen()
 	if vknotf.state.v then 
