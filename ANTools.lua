@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.2.8')
+script_version('3.1.2.9')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -3030,6 +3030,46 @@ function imgui.OnDrawFrame()
             end
 			imgui.SameLine()
 			imgui.TextQuestion(u8('Скрипт для отображения числа. Num+ - добавляет 1 к числу, Num- - вычитает 1 из числа'))
+			imgui.SameLine()
+			if imgui.Button(u8('Авто ловля лавки')) then
+				downloadUrlToFile('https://github.com/PhanLom/ARZ-Scripts/raw/main/PLTC/PLTC.lua',
+                   'moonloader\\PLTC.lua', 
+                   'PLTC.lua')
+				sampAddChatMessage("{FF8000}[ANTools]{FFFFFF} PLTC успешно загружен! Нажмите Ctrl+R для перезапуска MoonLoader.", -1)
+            end
+			imgui.SameLine()
+			imgui.TextQuestion(u8('Скрипт для авто ловли лавки.'))
+
+			-- PLTC section --
+			local pltc_ini_path = 'C:/Program Files/Arizona Games Launcher/bin/arizona/moonloader/config/PLTC/PLTC.ini'
+			local pltc_enabled = false
+			local pltc_ini = io.open(pltc_ini_path, 'r')
+			if pltc_ini then
+				for line in pltc_ini:lines() do
+					if line:match('enabled%s*=%s*true') then
+						pltc_enabled = true
+					end
+				end
+				pltc_ini:close()
+			end
+			if io.open('moonloader/PLTC.lua', 'r') then
+				imgui.Separator()
+				imgui.BeginChild('##pltc', imgui.ImVec2(-1, 80), false)
+				imgui.Text(u8('PLTC: Авто ловля лавки'))
+				imgui.SameLine()
+				local btn_text = pltc_enabled and u8('Выключить PLTC') or u8('Включить PLTC')
+				if imgui.Button(btn_text, imgui.ImVec2(160, 30)) then
+					local f = io.open(pltc_ini_path, 'w')
+					if f then
+						f:write('[settings]\nenabled=' .. (pltc_enabled and 'false' or 'true'))
+						f:close()
+						pltc_enabled = not pltc_enabled
+					end
+				end
+				imgui.SameLine()
+				imgui.TextQuestion(u8('Включает или выключает PLTC.'))
+				imgui.EndChild()
+			end
 			imgui.EndGroup()
 			imgui.EndChild()
 
