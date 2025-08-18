@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.3.3')
+script_version('3.1.3.4')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -3047,7 +3047,7 @@ function imgui.OnDrawFrame()
 			imgui.EndGroup()
 			PaddingSpace()
 			imgui.BeginGroup()
-			local pltc_ini_path = 'C:/Program Files/Arizona Games Launcher/bin/arizona/moonloader/config/PLTC/PLTC.ini'
+			local pltc_ini_path = 'moonloader/config/PLTC/PLTC.ini'
 			if not _G.pltc_enabled_bool or _G._pltc_last_menu ~= menunum then
 				local pltc_enabled = false
 				local pltc_ini = io.open(pltc_ini_path, 'r')
