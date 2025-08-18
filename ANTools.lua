@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.3.2')
+script_version('3.1.3.3')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -3048,27 +3048,30 @@ function imgui.OnDrawFrame()
 			PaddingSpace()
 			imgui.BeginGroup()
 			local pltc_ini_path = 'C:/Program Files/Arizona Games Launcher/bin/arizona/moonloader/config/PLTC/PLTC.ini'
-			local pltc_enabled = false
-			local pltc_ini = io.open(pltc_ini_path, 'r')
-			if pltc_ini then
-				for line in pltc_ini:lines() do
-					if line:match('enabled%s*=%s*true') then
-						pltc_enabled = true
+			if not _G.pltc_enabled_bool or _G._pltc_last_menu ~= menunum then
+				local pltc_enabled = false
+				local pltc_ini = io.open(pltc_ini_path, 'r')
+				if pltc_ini then
+					for line in pltc_ini:lines() do
+						if line:match('enabled%s*=%s*true') then
+							pltc_enabled = true
+						end
 					end
+					pltc_ini:close()
 				end
-				pltc_ini:close()
+				_G.pltc_enabled_bool = imgui.ImBool(pltc_enabled)
+				_G._pltc_last_menu = menunum
 			end
-			local pltc_enabled_bool = imgui.ImBool(pltc_enabled)
 			if io.open('moonloader/PLTC.lua', 'r') then
 				imgui.Separator()
 				imgui.CenterText(u8('Конфигурация PLTC'))
 				imgui.Separator()
 				PaddingSpace()
 				imgui.BeginChild('##pltc', imgui.ImVec2(-1, 80), false)
-				if imgui.Checkbox(u8('Включить PLTC'), pltc_enabled_bool) then
+				if imgui.Checkbox(u8('Включить PLTC'), _G.pltc_enabled_bool) then
 					local f = io.open(pltc_ini_path, 'w')
 					if f then
-						f:write('[settings]\nenabled=' .. (pltc_enabled_bool.v and 'true' or 'false'))
+						f:write('[settings]\nenabled=' .. (_G.pltc_enabled_bool.v and 'true' or 'false'))
 						f:close()
 					end
 				end
