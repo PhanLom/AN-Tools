@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.3.1.1')
+script_version('3.1.3.2')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -1505,8 +1505,6 @@ function threadHandle2(runner2, url2, args2, resolve2, reject2) -- обработка eff
 	if status == 'completed' then
 		local ok, result = r[1], r[2]
 		if ok then resolve2(result) else reject2(result) end
-	elseif err then
-		reject2(err)
 	elseif status == 'canceled' then
 		reject2(status)
 	end
