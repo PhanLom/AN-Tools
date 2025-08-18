@@ -3039,9 +3039,9 @@ function imgui.OnDrawFrame()
             end
 			imgui.SameLine()
 			imgui.TextQuestion(u8('Скрипт для авто ловли лавки.'))
+			imgui.EndGroup()
 			PaddingSpace()
-
-			-- PLTC section --
+			imgui.BeginGroup()
 			local pltc_ini_path = 'C:/Program Files/Arizona Games Launcher/bin/arizona/moonloader/config/PLTC/PLTC.ini'
 			local pltc_enabled = false
 			local pltc_ini = io.open(pltc_ini_path, 'r')
@@ -3059,7 +3059,7 @@ function imgui.OnDrawFrame()
 				imgui.CenterText(u8('Конфигурация PLTC'))
 				imgui.Separator()
 				PaddingSpace()
-				imgui.BeginGroup('##pltc', imgui.ImVec2(-1, 80), false)
+				imgui.BeginChild('##pltc', imgui.ImVec2(-1, 80), false)
 				if imgui.Checkbox(u8('Включить PLTC'), pltc_enabled_bool) then
 					local f = io.open(pltc_ini_path, 'w')
 					if f then
