@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.3')
+script_version('3.1.3.1')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -3039,6 +3039,7 @@ function imgui.OnDrawFrame()
             end
 			imgui.SameLine()
 			imgui.TextQuestion(u8('Скрипт для авто ловли лавки.'))
+			PaddingSpace()
 
 			-- PLTC section --
 			local pltc_ini_path = 'C:/Program Files/Arizona Games Launcher/bin/arizona/moonloader/config/PLTC/PLTC.ini'
@@ -3057,6 +3058,7 @@ function imgui.OnDrawFrame()
 				imgui.Separator()
 				imgui.CenterText(u8('Конфигурация PLTC'))
 				imgui.Separator()
+				PaddingSpace()
 				imgui.BeginChild('##pltc', imgui.ImVec2(-1, 80), false)
 				if imgui.Checkbox(u8('Включить PLTC'), pltc_enabled_bool) then
 					local f = io.open(pltc_ini_path, 'w')
