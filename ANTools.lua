@@ -3059,7 +3059,7 @@ function imgui.OnDrawFrame()
 				imgui.CenterText(u8('Конфигурация PLTC'))
 				imgui.Separator()
 				PaddingSpace()
-				imgui.BeginChild('##pltc', imgui.ImVec2(-1, 80), false)
+				imgui.BeginGroup('##pltc', imgui.ImVec2(-1, 80), false)
 				if imgui.Checkbox(u8('Включить PLTC'), pltc_enabled_bool) then
 					local f = io.open(pltc_ini_path, 'w')
 					if f then
