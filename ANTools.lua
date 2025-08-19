@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.3.4')
+script_version('3.1.3.5')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -3044,6 +3044,15 @@ function imgui.OnDrawFrame()
             end
 			imgui.SameLine()
 			imgui.TextQuestion(u8('Скрипт для авто ловли лавки.'))
+			imgui.SameLine()
+			if imgui.Button(u8('Угон авто')) then
+				downloadUrlToFile('https://github.com/PhanLom/ARZ-Scripts/raw/main/CSH/%5BARZ%5D%20Car%20Steal%20Helper.lua',
+                   'moonloader\\CSH.lua', 
+                   'CSH.lua')
+				sampAddChatMessage("{FF8000}[ANTools]{FFFFFF} CSH успешно загружен! Нажмите Ctrl+R для перезапуска MoonLoader.", -1)
+            end
+			imgui.SameLine()
+			imgui.TextQuestion(u8('Скрипт для отображения цен при угоне транспорта.'))
 			imgui.EndGroup()
 			PaddingSpace()
 			imgui.BeginGroup()
