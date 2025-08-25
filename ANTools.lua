@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.3.8')
+script_version('3.1.4')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -43,11 +43,6 @@ local npc, infnpc = {}, {}
 local mainIni = inicfg.load({
 	autologin = {
 		state = false
-	},
-	arec ={
-		state = false,
-		statebanned = false,
-		wait = 50
 	},
 	roulette = {
 		standart = false,
@@ -585,6 +580,9 @@ changelog5 = [[
 			· В основных настройках можно скачать и управлять скриптом
 		· Планируется добавление новых скриптов в будущем
 
+	v3.1.4
+		· Убран авто реконнект
+
 
 ]]
 
@@ -610,8 +608,6 @@ scriptcommand = [[
 		/ANTools - открыть меню скрипта
 		/ANreload - перезагрузить скрипт 
 		/ANunload - выгрузить скрипт
-		/ANrec - реконнект с секундами
-		/ANsrec - остановить реконнект(стандартный или авторекон)
 
 ]]
 
@@ -697,11 +693,6 @@ local autoadbiz = imgui.ImBool(mainIni.config.autoadbiz)
 local binfo = imgui.ImBool(mainIni.buttons.binfo)
 local autologin = {
 	state = imgui.ImBool(mainIni.autologin.state)
-}
-local arec = {
-	state = imgui.ImBool(mainIni.arec.state),
-	statebanned = imgui.ImBool(mainIni.arec.statebanned),
-	wait = imgui.ImInt(mainIni.arec.wait)
 }
 local roulette = {
 	standart = imgui.ImBool(mainIni.roulette.standart),
@@ -2529,26 +2520,6 @@ function main()
 	sampRegisterChatCommand('ANTools',function() ANsets.v = not ANsets.v end)
 	sampRegisterChatCommand('ANreload',function() thisScript():reload() end)
 	sampRegisterChatCommand('ANunload',function() thisScript():unload() end)
-	sampRegisterChatCommand('ANsrec', function() 
-		if handle_aurc then
-			handle_aurc:terminate()
-			handle_aurc = nil
-			ANMessage('Автореконнект остановлен!')
-		else
-			ANMessage('Вы сейчас не ожидаете автореконнекта!')
-		end
-		if handle_rc then
-			handle_rc:terminate()
-			handle_rc = nil
-			ANMessage('Реконнект остановлен!')
-		else
-			ANMessage('Вы сейчас не ожидаете реконнекта!')
-		end
-	end)
-	sampRegisterChatCommand('ANrec',function(a)
-		a = a and (tonumber(a) and tonumber(a) or 1) or 1
-		reconstandart(a)
-	end)
 	if fastconnect.v then
 		sampFastConnect(fastconnect.v)
 	end
@@ -2954,19 +2925,6 @@ function imgui.OnDrawFrame()
 			welcomeText = not imgui.TextColoredRGB("") 
 			PaddingSpace()
 			imgui.BeginChild('##ana',imgui.ImVec2(-1,-1),false)
-			imgui.Separator()
-			imgui.CenterText(u8('Автореконнект'))
-			imgui.Separator()
-			PaddingSpace()
-			imgui.Checkbox(u8('Включить автореконнект'), arec.state)
-			if arec.state.v then
-				imgui.Checkbox(u8('Включить автореконнект при You are banned from this server'), arec.statebanned)
-			    imgui.SameLine()
-			    imgui.PushItemWidth(80)
-				imgui.Spacing()
-			    imgui.InputInt(u8('Задержка(сек)###arec'),arec.wait)
-			    imgui.PopItemWidth()
-			end
 			PaddingSpace()
 			imgui.Separator()
 			imgui.CenterText(u8('Автоматическая отправка сообщений'))
@@ -4252,34 +4210,6 @@ function reconname(playername,ips,ports)
 		end 
 	end)
 end
--- создать autorecon
-function goaurc()
-	if vknotf.iscloseconnect.v then
-		sendvknotf('Потеряно соединение с сервером')
-	end
-	if tgnotf.iscloseconnect.v then
-		sendtgnotf('Потеряно соединение с сервером')
-	end
-	if arec.state.v then
-		if handle_aurc then
-			handle_aurc:terminate()
-			handle_aurc = nil
-			ANMessage('Предыдущий автореконнект был остановлен')
-		end
-		if handle_rc then
-			handle_rc:terminate()
-			handle_rc = nil
-			ANMessage('Обычный автореконнект был остановлен т.к сработал автореконнект')
-		end
-		handle_aurc = lua_thread.create(function()
-			local ip, port = sampGetCurrentServerAddress()
-			ANMessage('Соединение потеряно. Реконнект через '..arec.wait.v..' секунд')
-			wait(arec.wait.v * 1000)
-			sampConnectToServer(ip,port)
-			handle_aurc = nil
-		end)
-	end
-end
 --закрыть соединение
 function closeConnect()
 	raknetEmulPacketReceiveBitStream(PACKET_DISCONNECTION_NOTIFICATION, raknetNewBitStream())
@@ -4290,10 +4220,6 @@ end
 function saveini()
 	--login
 	mainIni.autologin.state = autologin.state.v
-	--autoreconnect
-	mainIni.arec.state = arec.state.v
-	mainIni.arec.statebanned = arec.statebanned.v
-	mainIni.arec.wait = arec.wait.v
 	--roulette
 	mainIni.roulette.standart = roulette.standart.v
 	mainIni.roulette.platina = roulette.platina.v
