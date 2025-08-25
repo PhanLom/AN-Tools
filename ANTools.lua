@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.3.6')
+script_version('3.1.3.7')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
