@@ -1,6 +1,6 @@
 script_name('Arizona Notify')
 script_author("PhanLom")
-script_version('3.1.3.7')
+script_version('3.1.3.8')
 script_properties('work-in-run')
 
 local dlstatus = require("moonloader").download_status
@@ -2529,6 +2529,45 @@ function main()
 	sampRegisterChatCommand('ANTools',function() ANsets.v = not ANsets.v end)
 	sampRegisterChatCommand('ANreload',function() thisScript():reload() end)
 	sampRegisterChatCommand('ANunload',function() thisScript():unload() end)
+	sampRegisterChatCommand('ANsrec', function() 
+		if handle_aurc then
+			handle_aurc:terminate()
+			handle_aurc = nil
+			ANMessage('Автореконнект остановлен!')
+		else
+			ANMessage('Вы сейчас не ожидаете автореконнекта!')
+		end
+		if handle_rc then
+			handle_rc:terminate()
+			handle_rc = nil
+			ANMessage('Реконнект остановлен!')
+		else
+			ANMessage('Вы сейчас не ожидаете реконнекта!')
+		end
+	end)
+	sampRegisterChatCommand('ANrec',function(a)
+		a = a and (tonumber(a) and tonumber(a) or 1) or 1
+		reconstandart(a)
+	end)
+	if fastconnect.v then
+		sampFastConnect(fastconnect.v)
+	end
+	workpaus(antiafk.v)
+	lua_thread.create(vkget)
+	lua_thread.create(get_telegram_updates)
+    while true do 
+		wait(0)
+        imgui.Process = ANsets.v or #_message>0
+		imgui.ShowCursor = ANsets.v
+		if idsshow then
+            local alltextdraws = sampGetAllTextDraws()
+            for _, v in pairs(alltextdraws) do
+                local fX,fY = sampTextdrawGetPos(v)
+                local fX,fY = convertGameScreenCoordsToWindowScreenCoords(fX,fY)	
+                renderFontDrawText(font2,tostring(v),tonumber(fX),tonumber(fY),0xD7FFFFFF)
+            end
+		end
+    end
 end
 function convertHexToImVec4(hex,alp)
 	alp = alp or 255 
@@ -2913,6 +2952,21 @@ function imgui.OnDrawFrame()
 
 		elseif menunum == 1 then
 			welcomeText = not imgui.TextColoredRGB("") 
+			PaddingSpace()
+			imgui.BeginChild('##ana',imgui.ImVec2(-1,-1),false)
+			imgui.Separator()
+			imgui.CenterText(u8('Автореконнект'))
+			imgui.Separator()
+			PaddingSpace()
+			imgui.Checkbox(u8('Включить автореконнект'), arec.state)
+			if arec.state.v then
+				imgui.Checkbox(u8('Включить автореконнект при You are banned from this server'), arec.statebanned)
+			    imgui.SameLine()
+			    imgui.PushItemWidth(80)
+				imgui.Spacing()
+			    imgui.InputInt(u8('Задержка(сек)###arec'),arec.wait)
+			    imgui.PopItemWidth()
+			end
 			PaddingSpace()
 			imgui.Separator()
 			imgui.CenterText(u8('Автоматическая отправка сообщений'))
@@ -4140,6 +4194,92 @@ function sampev.onSendDialogResponse(dialogid, button, list, text)
 		dialogChecker.title = ""
 	end
 end	
+-- реконы 
+-- рекон стандарт 
+function reconstandart(timewait,bool_close)
+	if handle_aurc then
+		handle_aurc:terminate()
+		handle_aurc = nil
+		ANMessage('Автореконнект остановлен т.к вы использовали обычный реконнект')
+	end
+	if handle_rc then
+		handle_rc:terminate()
+		handle_rc = nil
+		ANMessage('Предыдущий реконнект был остановлен')
+	end
+	handle_rc = lua_thread.create(function(timewait2, bclose)
+		bclose = bclose or true
+		if bclose then
+			closeConnect()
+		end
+		timewait2 = tonumber(timewait2)
+		if timewait2 then	
+			if timewait2 >= 0 then
+				recwaitim = timewait2*1000
+				ANMessage('Реконнект через '..timewait2..' секунд')
+				wait(recwaitim)
+				sampConnectToServer(sampGetCurrentServerAddress())
+			end
+		else
+			ANMessage('Реконнект...')
+			sampConnectToServer(sampGetCurrentServerAddress())
+		end  
+		handle_rc = nil
+	end,timewait, bool_close)
+end
+--рекон с ником 
+function reconname(playername,ips,ports)
+	if handle_aurc then
+		handle_aurc:terminate()
+		handle_aurc = nil
+		ANMessage('Автореконнект остановлен т.к вы использовали реконнект с ником')
+	end
+	if handle_rc then
+		handle_rc:terminate()
+		handle_rc = nil
+		ANMessage('Предыдущий реконнект был остановлен')
+	end
+	handle_rc = lua_thread.create(function()
+		if #playername == 0 then
+			ANMessage('Введите ник для реконнекта')
+		else
+			closeConnect()
+			sampSetLocalPlayerName(playername)
+			ANMessage('Реконнект с новым ником\n'..playername)
+			local ip, port = sampGetCurrentServerAddress()
+			ips,ports = ips or ip, ports or port
+			sampConnectToServer(ips,ports)
+		end 
+	end)
+end
+-- создать autorecon
+function goaurc()
+	if vknotf.iscloseconnect.v then
+		sendvknotf('Потеряно соединение с сервером')
+	end
+	if tgnotf.iscloseconnect.v then
+		sendtgnotf('Потеряно соединение с сервером')
+	end
+	if arec.state.v then
+		if handle_aurc then
+			handle_aurc:terminate()
+			handle_aurc = nil
+			ANMessage('Предыдущий автореконнект был остановлен')
+		end
+		if handle_rc then
+			handle_rc:terminate()
+			handle_rc = nil
+			ANMessage('Обычный автореконнект был остановлен т.к сработал автореконнект')
+		end
+		handle_aurc = lua_thread.create(function()
+			local ip, port = sampGetCurrentServerAddress()
+			ANMessage('Соединение потеряно. Реконнект через '..arec.wait.v..' секунд')
+			wait(arec.wait.v * 1000)
+			sampConnectToServer(ip,port)
+			handle_aurc = nil
+		end)
+	end
+end
 --закрыть соединение
 function closeConnect()
 	raknetEmulPacketReceiveBitStream(PACKET_DISCONNECTION_NOTIFICATION, raknetNewBitStream())
